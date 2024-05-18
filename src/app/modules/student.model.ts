@@ -56,10 +56,14 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 
 const studentSchema = new Schema<Student>({
   id: {
-    type: String,
+    type: String, // this String from mongoose that's why it start from capital word
   },
   name: studentNameSchema,
-  gender: ['Male', 'Female'], // enum type
+  gender: {
+    type: String,
+    enum: ['Male', 'Female'],
+    required: true,
+  }, // enum type
   dateOfBirth: {
     type: String,
   },
@@ -75,7 +79,10 @@ const studentSchema = new Schema<Student>({
     type: String,
     required: true,
   },
-  bloodGroup: ['A+', 'A-', 'B+', 'B-', 'o+', 'o-', 'AB+', 'AB-'],
+  bloodGroup: {
+    type: String,
+    enum: ['A+', 'A-', 'B+', 'B-', 'o+', 'o-', 'AB+', 'AB-'],
+  },
   presentAddress: {
     type: String,
     required: true,
