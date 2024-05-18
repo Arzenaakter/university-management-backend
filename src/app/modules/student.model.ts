@@ -9,7 +9,7 @@ import {
 const studentNameSchema = new Schema<UserName>({
   firstName: {
     type: String,
-    required: true,
+    required: [true, 'First Name is required'],
   },
   middleName: {
     type: String,
@@ -57,11 +57,24 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 const studentSchema = new Schema<Student>({
   id: {
     type: String, // this String from mongoose that's why it start from capital word
+    required: true,
+    unique: true,
   },
-  name: studentNameSchema,
+  name: {
+    type: studentNameSchema,
+    required: [true, 'Name is required'],
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   gender: {
     type: String,
-    enum: ['Male', 'Female'],
+    enum: {
+      values: ['Male', 'Female', 'other'],
+      message: '{VALUE} is not supported',
+    },
     required: true,
   }, // enum type
   dateOfBirth: {
@@ -75,10 +88,7 @@ const studentSchema = new Schema<Student>({
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-  },
+
   bloodGroup: {
     type: String,
     enum: ['A+', 'A-', 'B+', 'B-', 'o+', 'o-', 'AB+', 'AB-'],
@@ -96,7 +106,11 @@ const studentSchema = new Schema<Student>({
   profileImg: {
     type: String,
   },
-  isActive: ['active', 'inActive'],
+  isActive: {
+    type: String,
+    enum: ['active', 'inActive'],
+    default: 'active',
+  },
 });
 
 export const studentModel = model<Student>('Student', studentSchema);
