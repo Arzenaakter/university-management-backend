@@ -10,6 +10,15 @@ const studentNameSchema = new Schema<UserName>({
   firstName: {
     type: String,
     required: [true, 'First Name is required'],
+    trim: true, // remove space
+    maxlength: [20, 'First name can not be more than 20 '],
+    validate: {
+      validator: function (value: String) {
+        const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1); // Arzena
+        return firstNameStr === value;
+      },
+      message: '{VALUE} is not capitalize format',
+    },
   },
   middleName: {
     type: String,

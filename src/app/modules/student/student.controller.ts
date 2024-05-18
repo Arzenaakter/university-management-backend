@@ -13,6 +13,11 @@ const createStudent = async (req: Request, res: Response) => {
       data: studentData,
     });
   } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Something went wrong !',
+      error: error,
+    });
     console.log(error);
   }
 };
@@ -54,6 +59,11 @@ const deleteSingleStudent = async (req: Request, res: Response) => {
       data: singleStudentData,
     });
   } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Something went wrong !',
+      error: error,
+    });
     console.log(error);
   }
 };
