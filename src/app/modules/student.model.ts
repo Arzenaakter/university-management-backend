@@ -16,48 +16,57 @@ const studentNameSchema = new Schema<UserName>({
   },
   lastName: {
     type: String,
-    required: true,
+    required: [true, 'Last Name is required'],
   },
 });
 
 const guardianSchema = new Schema<Guardian>({
   fatherName: {
     type: String,
-    required: true,
+    required: [true, 'Father Name is required'],
   },
   fatherOccupation: {
     type: String,
-    required: true,
+    required: [true, 'Father Occupation is required'],
   },
   fatherContactNo: {
     type: String,
-    required: true,
+    required: [true, 'Father Contact Number is required'],
   },
   motherName: {
     type: String,
-    required: true,
+    required: [true, 'Mother Name is required'],
   },
   motherOccupation: {
     type: String,
-    required: true,
+    required: [true, 'Mother Occupation is required'],
   },
   motherContactNo: {
     type: String,
-    required: true,
+    required: [true, 'Mother Contact Number is required'],
   },
 });
 
 const localGuardianSchema = new Schema<LocalGuardian>({
-  name: { type: String, required: true },
-  occupation: { type: String, required: true },
-  contactNo: { type: String, required: true },
-  address: { type: String, required: true },
+  name: { type: String, required: [true, 'Local Guardian Name is required'] },
+  occupation: {
+    type: String,
+    required: [true, 'Local Guardian Occupation is required'],
+  },
+  contactNo: {
+    type: String,
+    required: [true, 'Local Guardian Contact Number is required'],
+  },
+  address: {
+    type: String,
+    required: [true, 'Local Guardian Address is required'],
+  },
 });
 
 const studentSchema = new Schema<Student>({
   id: {
-    type: String, // this String from mongoose that's why it start from capital word
-    required: true,
+    type: String,
+    required: [true, 'Student ID is required'],
     unique: true,
   },
   name: {
@@ -66,8 +75,14 @@ const studentSchema = new Schema<Student>({
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
     unique: true,
+    validate: {
+      validator: function (v: string) {
+        return /^\S+@\S+\.\S+$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid email address!`,
+    },
   },
   gender: {
     type: String,
@@ -75,40 +90,52 @@ const studentSchema = new Schema<Student>({
       values: ['Male', 'Female', 'other'],
       message: '{VALUE} is not supported',
     },
-    required: true,
-  }, // enum type
+    required: [true, 'Gender is required'],
+  },
   dateOfBirth: {
     type: String,
+    required: [true, 'Date of Birth is required'],
   },
   contactNo: {
     type: String,
-    required: true,
+    required: [true, 'Contact Number is required'],
   },
   emergencyContactNo: {
     type: String,
-    required: true,
+    required: [true, 'Emergency Contact Number is required'],
   },
-
   bloodGroup: {
     type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'o+', 'o-', 'AB+', 'AB-'],
+    enum: {
+      values: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
+      message: '{VALUE} is not a valid blood group',
+    },
   },
   presentAddress: {
     type: String,
-    required: true,
+    required: [true, 'Present Address is required'],
   },
   permanentAddress: {
     type: String,
-    required: true,
+    required: [true, 'Permanent Address is required'],
   },
-  guardian: guardianSchema,
-  localGuardian: localGuardianSchema,
+  guardian: {
+    type: guardianSchema,
+    required: [true, 'Guardian information is required'],
+  },
+  localGuardian: {
+    type: localGuardianSchema,
+    required: [true, 'Local Guardian information is required'],
+  },
   profileImg: {
     type: String,
   },
   isActive: {
     type: String,
-    enum: ['active', 'inActive'],
+    enum: {
+      values: ['active', 'inActive'],
+      message: '{VALUE} is not a valid status',
+    },
     default: 'active',
   },
 });
