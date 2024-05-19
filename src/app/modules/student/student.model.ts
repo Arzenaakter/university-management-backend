@@ -4,7 +4,7 @@ import {
   LocalGuardian,
   Student,
   UserName,
-} from './student/student.interface';
+} from './student.interface';
 
 const studentNameSchema = new Schema<UserName>({
   firstName: {
@@ -86,12 +86,12 @@ const studentSchema = new Schema<Student>({
     type: String,
     required: [true, 'Email is required'],
     unique: true,
-    validate: {
-      validator: function (v: string) {
-        return /^\S+@\S+\.\S+$/.test(v);
-      },
-      message: (props) => `${props.value} is not a valid email address!`,
-    },
+    // validate: {
+    //   validator: function (v: string) {
+    //     return /^\S+@\S+\.\S+$/.test(v);
+    //   },
+    //   message: (props) => `${props.value} is not a valid email address!`,
+    // },
   },
   gender: {
     type: String,
