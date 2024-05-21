@@ -5,6 +5,8 @@ import {
   Student,
   UserName,
 } from './student.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
 const studentNameSchema = new Schema<UserName>({
   firstName: {
@@ -78,6 +80,11 @@ const studentSchema = new Schema<Student>({
     required: [true, 'Student ID is required'],
     unique: true,
   },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    maxlength: [20, 'Password can not be more then 20 character'],
+  },
   name: {
     type: studentNameSchema,
     required: [true, 'Name is required'],
@@ -147,6 +154,40 @@ const studentSchema = new Schema<Student>({
     },
     default: 'active',
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+//pre save middleware / hook
+studentSchema.pre('save', async function (next) {
+  // console.log(this, 'pre hook: will save the data');
+  // password hasing
+  const userInfo = this;
+  userInfo.password = await bcrypt.hash(
+    userInfo.password,
+    Number(config.salt_Rounds),
+  );
+  next();
+});
+
+//post save middleware / hook
+studentSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
+});
+
+// query middleware
+studentSchema.pre('find', function (next) {
+  // console.log(this);
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+studentSchema.pre('findOne', function (next) {
+  // console.log(this);
+  this.find({ isDeleted: { $ne: true } });
+  next();
 });
 
 export const studentModel = model<Student>('Student', studentSchema);

@@ -96,6 +96,7 @@ const studentValidationSchema = Joi.object({
     'any.required': 'Local Guardian information is required',
   }),
   profileImg: Joi.string(),
+
   isActive: Joi.string()
     .valid('active', 'inActive')
     .default('active')

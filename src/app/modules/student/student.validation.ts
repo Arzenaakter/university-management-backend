@@ -45,6 +45,7 @@ const localGuardianValidationSchema = z.object({
 // Define Zod schema for Student
 const studentValidationSchema = z.object({
   id: z.string().min(1, { message: 'Student ID is required' }),
+  password: z.string().max(20, { message: 'Password is required' }),
   name: userNameValidationSchema,
   email: z
     .string()
@@ -68,6 +69,7 @@ const studentValidationSchema = z.object({
   guardian: guardianValidationSchema,
   localGuardian: localGuardianValidationSchema,
   profileImg: z.string().optional(),
+  isDeleted: z.boolean(),
   isActive: z
     .enum(['active', 'inActive'], {
       errorMap: () => ({ message: 'Status is not valid' }),

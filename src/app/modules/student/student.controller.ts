@@ -31,10 +31,10 @@ const createStudent = async (req: Request, res: Response) => {
       message: 'Student Created successfully',
       data: result,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({
       success: false,
-      message: 'Something went wrong !',
+      message: error.message || 'Something went wrong !',
       error: error,
     });
     console.log(error);
@@ -49,7 +49,12 @@ const getAllStudent = async (req: Request, res: Response) => {
       message: ' Get all student successfully',
       data: allStudentData,
     });
-  } catch (error) {
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Something went wrong !',
+      error: error,
+    });
     console.log(error);
   }
 };
@@ -63,7 +68,12 @@ const getSingleStudent = async (req: Request, res: Response) => {
       message: ' Get single student successfully',
       data: singleStudentData,
     });
-  } catch (error) {
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Something went wrong !',
+      error: error,
+    });
     console.log(error);
   }
 };
