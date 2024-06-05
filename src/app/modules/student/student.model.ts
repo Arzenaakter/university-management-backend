@@ -1,14 +1,14 @@
-import { Schema, model, connect } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import {
-  Guardian,
-  LocalGuardian,
-  Student,
-  UserName,
+  TGuardian,
+  TLocalGuardian,
+  TStudent,
+  TUserName,
 } from './student.interface';
-import bcrypt from 'bcrypt';
-import config from '../../config';
 
-const studentNameSchema = new Schema<UserName>({
+
+
+const studentNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First Name is required'],
@@ -31,7 +31,7 @@ const studentNameSchema = new Schema<UserName>({
   },
 });
 
-const guardianSchema = new Schema<Guardian>({
+const guardianSchema = new Schema<TGuardian>({
   fatherName: {
     type: String,
     required: [true, 'Father Name is required'],
@@ -58,7 +58,7 @@ const guardianSchema = new Schema<Guardian>({
   },
 });
 
-const localGuardianSchema = new Schema<LocalGuardian>({
+const localGuardianSchema = new Schema<TLocalGuardian>({
   name: { type: String, required: [true, 'Local Guardian Name is required'] },
   occupation: {
     type: String,
@@ -74,109 +74,103 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<Student>({
-  id: {
-    type: String,
-    required: [true, 'Student ID is required'],
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: [true, 'Password is required'],
-    maxlength: [20, 'Password can not be more then 20 character'],
-  },
-  name: {
-    type: studentNameSchema,
-    required: [true, 'Name is required'],
-  },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    // validate: {
-    //   validator: function (v: string) {
-    //     return /^\S+@\S+\.\S+$/.test(v);
-    //   },
-    //   message: (props) => `${props.value} is not a valid email address!`,
+const studentSchema = new Schema<TStudent>(
+  {
+    id: {
+      type: String,
+      required: [true, 'Student ID is required'],
+      unique: true,
+      ref: 'User'
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User id is required'],
+        unique: true,
+    },
+    // password: {
+    //   type: String,
+    //   required: [true, 'Password is required'],
+    //   maxlength: [20, 'Password can not be more then 20 character'],
     // },
-  },
-  gender: {
-    type: String,
-    enum: {
-      values: ['Male', 'Female', 'other'],
-      message: '{VALUE} is not supported',
+    name: {
+      type: studentNameSchema,
+      required: [true, 'Name is required'],
     },
-    required: [true, 'Gender is required'],
-  },
-  dateOfBirth: {
-    type: String,
-    required: [true, 'Date of Birth is required'],
-  },
-  contactNo: {
-    type: String,
-    required: [true, 'Contact Number is required'],
-  },
-  emergencyContactNo: {
-    type: String,
-    required: [true, 'Emergency Contact Number is required'],
-  },
-  bloodGroup: {
-    type: String,
-    enum: {
-      values: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
-      message: '{VALUE} is not a valid blood group',
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+      // validate: {
+      //   validator: function (v: string) {
+      //     return /^\S+@\S+\.\S+$/.test(v);
+      //   },
+      //   message: (props) => `${props.value} is not a valid email address!`,
+      // },
+    },
+    gender: {
+      type: String,
+      enum: {
+        values: ['Male', 'Female', 'other'],
+        message: '{VALUE} is not supported',
+      },
+      required: [true, 'Gender is required'],
+    },
+    dateOfBirth: {
+      type: String,
+      required: [true, 'Date of Birth is required'],
+    },
+    contactNo: {
+      type: String,
+      required: [true, 'Contact Number is required'],
+    },
+    emergencyContactNo: {
+      type: String,
+      required: [true, 'Emergency Contact Number is required'],
+    },
+    bloodGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
+        message: '{VALUE} is not a valid blood group',
+      },
+    },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present Address is required'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent Address is required'],
+    },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian information is required'],
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local Guardian information is required'],
+    },
+    profileImg: {
+      type: String,
+    },
+   
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
-  presentAddress: {
-    type: String,
-    required: [true, 'Present Address is required'],
-  },
-  permanentAddress: {
-    type: String,
-    required: [true, 'Permanent Address is required'],
-  },
-  guardian: {
-    type: guardianSchema,
-    required: [true, 'Guardian information is required'],
-  },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: [true, 'Local Guardian information is required'],
-  },
-  profileImg: {
-    type: String,
-  },
-  isActive: {
-    type: String,
-    enum: {
-      values: ['active', 'inActive'],
-      message: '{VALUE} is not a valid status',
+  {
+    toJSON: {
+      virtuals: true,
     },
-    default: 'active',
   },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
+);
+
+// virtual
+studentSchema.virtual('fullName').get(function () {
+  return this.name.firstName + this.name.middleName + this.name.lastName;
 });
 
-//pre save middleware / hook
-studentSchema.pre('save', async function (next) {
-  // console.log(this, 'pre hook: will save the data');
-  // password hasing
-  const userInfo = this;
-  userInfo.password = await bcrypt.hash(
-    userInfo.password,
-    Number(config.salt_Rounds),
-  );
-  next();
-});
-
-//post save middleware / hook
-studentSchema.post('save', function (doc, next) {
-  doc.password = '';
-  next();
-});
 
 // query middleware
 studentSchema.pre('find', function (next) {
@@ -190,4 +184,22 @@ studentSchema.pre('findOne', function (next) {
   next();
 });
 
-export const studentModel = model<Student>('Student', studentSchema);
+// [ {$match: { isDeleted : {  $ne: : true}}}   ,{ '$match': { id: '123456' } } ]
+
+studentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
+
+
+// creating a custom  static method
+studentSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await studentModel.findOne({ id });
+  return existingUser
+  
+}
+
+
+
+
+export const studentModel = model<TStudent>('Student', studentSchema);
