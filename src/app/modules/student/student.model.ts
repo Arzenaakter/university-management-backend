@@ -6,8 +6,6 @@ import {
   TUserName,
 } from './student.interface';
 
-
-
 const studentNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
@@ -80,12 +78,12 @@ const studentSchema = new Schema<TStudent>(
       type: String,
       required: [true, 'Student ID is required'],
       unique: true,
-      ref: 'User'
+      ref: 'User',
     },
     user: {
       type: Schema.Types.ObjectId,
       required: [true, 'User id is required'],
-        unique: true,
+      unique: true,
     },
     // password: {
     //   type: String,
@@ -153,7 +151,7 @@ const studentSchema = new Schema<TStudent>(
     profileImg: {
       type: String,
     },
-   
+
     isDeleted: {
       type: Boolean,
       default: false,
@@ -170,7 +168,6 @@ const studentSchema = new Schema<TStudent>(
 studentSchema.virtual('fullName').get(function () {
   return this.name.firstName + this.name.middleName + this.name.lastName;
 });
-
 
 // query middleware
 studentSchema.pre('find', function (next) {
@@ -191,15 +188,10 @@ studentSchema.pre('aggregate', function (next) {
   next();
 });
 
-
 // creating a custom  static method
 studentSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await studentModel.findOne({ id });
-  return existingUser
-  
-}
-
-
-
+  return existingUser;
+};
 
 export const studentModel = model<TStudent>('Student', studentSchema);

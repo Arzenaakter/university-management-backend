@@ -14,13 +14,13 @@ app.use(cors());
 // application routes
 // app.use('/api/v1/student', studentRoutes);
 // app.use('/api/v1/user', userRoutes);
-app.use('/api/v1', router)
+app.use('/api/v1', router);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('server is running');
 });
 
-app.use(globalErrorHandler)
-app.use(notFound)
+app.use(globalErrorHandler);
+app.use(notFound);
 
 export default app;
