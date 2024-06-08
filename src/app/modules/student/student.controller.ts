@@ -25,12 +25,6 @@ const getSingleStudent: RequestHandler = catchAsync(async (req, res, next) => {
     message: ' Get single student successfully',
     data: singleStudentData,
   });
-
-  // res.status(200).json({
-  //   success: true,
-  //   message: ' Get single student successfully',
-  //   data: singleStudentData,
-  // });
 });
 const deleteSingleStudent: RequestHandler = catchAsync(
   async (req, res, next) => {

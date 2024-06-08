@@ -29,12 +29,12 @@ const getAllAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
     data: getAllAcademicSemesterData,
   });
 });
-// get all academic semester
+// get single academic semester
 const getSingleAcademicSemester: RequestHandler = catchAsync(
   async (req, res) => {
-    const { id } = req.params;
+    const { semesterId } = req.params;
     const getSingleAcademicSemesterData =
-      await academicSemesterService.getSingleAcademicSemesterFromDB(id);
+      await academicSemesterService.getSingleAcademicSemesterFromDB(semesterId);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -45,8 +45,28 @@ const getSingleAcademicSemester: RequestHandler = catchAsync(
   },
 );
 
+//Update single academic semester
+const updateSingleAcademicSemester: RequestHandler = catchAsync(
+  async (req, res) => {
+    const { semesterId } = req.params;
+    const getSingleAcademicSemesterData =
+      await academicSemesterService.updateSingleAcademicSemesterFromDB(
+        semesterId,
+        req.body,
+      );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Update semester successfully',
+      data: getSingleAcademicSemesterData,
+    });
+  },
+);
+
 export const academicSemesterController = {
   createAcademicSemester,
   getAllAcademicSemester,
   getSingleAcademicSemester,
+  updateSingleAcademicSemester,
 };
