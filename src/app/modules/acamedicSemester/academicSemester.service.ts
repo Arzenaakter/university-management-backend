@@ -1,18 +1,12 @@
-import {
-  TAcademicSemesterNameCodeMapper,
-  TacademicSemester,
-} from './acamedicSemester.interface';
+import { academicSemesterNameCodeMapper } from './academicSemester.constants';
+import { TacademicSemester } from './acamedicSemester.interface';
 import { acamedicSemesterModel } from './acamedicSemester.model';
 
 const createAcademicSemesterFromDB = async (
   academicSemesterData: TacademicSemester,
 ) => {
   // semester name--> semester code
-  const academicSemesterNameCodeMapper: TAcademicSemesterNameCodeMapper = {
-    Autumn: '01',
-    Summer: '02',
-    Fall: '03',
-  };
+
   if (
     academicSemesterNameCodeMapper[academicSemesterData.name] !==
     academicSemesterData.code
@@ -23,6 +17,12 @@ const createAcademicSemesterFromDB = async (
   return result;
 };
 
+const getAllAcademicSemesterFromDB = async () => {
+  const result = await acamedicSemesterModel.find();
+  return result;
+};
+
 export const academicSemesterService = {
   createAcademicSemesterFromDB,
+  getAllAcademicSemesterFromDB,
 };
