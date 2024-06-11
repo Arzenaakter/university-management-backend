@@ -78,12 +78,12 @@ const studentSchema = new Schema<TStudent>(
       type: String,
       required: [true, 'Student ID is required'],
       unique: true,
-      ref: 'User',
     },
     user: {
       type: Schema.Types.ObjectId,
       required: [true, 'User id is required'],
       unique: true,
+      ref: 'User',
     },
     // password: {
     //   type: String,
@@ -149,6 +149,10 @@ const studentSchema = new Schema<TStudent>(
     },
     profileImg: {
       type: String,
+    },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'academicSemester', //database collection name
     },
 
     isDeleted: {

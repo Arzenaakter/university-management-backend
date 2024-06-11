@@ -1,24 +1,33 @@
 import config from '../../config';
+import { TacademicSemester } from '../acamedicSemester/acamedicSemester.interface';
+import { acamedicSemesterModel } from '../acamedicSemester/acamedicSemester.model';
 import { TStudent } from '../student/student.interface';
 import { studentModel } from '../student/student.model';
 import { TUser } from './user.interface';
 import { userModel } from './user.model';
+import { generateStudentdId } from './user.utils';
 
 const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   // create user
-  const user: Partial<TUser> = {}; // partial means optional
+  const userData: Partial<TUser> = {}; // partial means optional
 
   // if password not given, use default
-  user.password = password || (config.default_pass as string);
+  userData.password = password || (config.default_pass as string);
 
   // set role
-  user.role = 'student';
-  user.id = '20240001';
+  userData.role = 'student';
+
+  // find academic semester info
+  const admissionSmester = await acamedicSemesterModel.findById(
+    studentData.admissionSemester,
+  );
+
+  userData.id = await generateStudentdId(admissionSmester as TacademicSemester);
 
   // create user
-  const newUser = await userModel.create(user);
+  const newUser = await userModel.create(userData);
   // create student
-  if (Object.keys(newUser)) {
+  if (Object.keys(newUser).length) {
     studentData.id = newUser.id;
     studentData.user = newUser._id; //refernce id
 

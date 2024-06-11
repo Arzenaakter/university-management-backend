@@ -1,4 +1,4 @@
-import { Schema, model, connect, Types, Model } from 'mongoose';
+import { Schema, model, connect, Types, Model, ObjectId } from 'mongoose';
 export type TGuardian = {
   fatherName: string;
   fatherOccupation: string;
@@ -35,6 +35,7 @@ export type TStudent = {
   guardian: TGuardian;
   localGuardian: TLocalGuardian;
   profileImg?: string;
+  admissionSemester: Types.ObjectId;
   isDeleted: boolean;
 };
 
