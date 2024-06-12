@@ -15,7 +15,7 @@ router.get(
 );
 router.get(
   '/:academicFacultyId',
-  academicFacultyController.getAllAcademicFaculty,
+  academicFacultyController.getSingleAcademicFaculty,
 );
 router.patch(
   '/:academicFacultyId',
